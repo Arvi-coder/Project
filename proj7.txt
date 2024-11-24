@@ -1,0 +1,167 @@
+Default.aspx
+
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="proj7._Default" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Employee Salary Finder</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <h2>Find Employee Salary</h2>
+
+            <label for="empID">Employee ID: </label>
+            <asp:TextBox ID="empID" runat="server"></asp:TextBox>
+            <br />
+
+            <label for="deptID">Department ID: </label>
+            <asp:TextBox ID="deptID" runat="server"></asp:TextBox>
+            <br />
+
+            <asp:Button ID="btnSearch" runat="server" Text="Find Salary" OnClick="btnSearch_Click" />
+            
+            <br />
+            
+            <label for="empSalary">Employee Salary: </label>
+            <asp:Label ID="lblSalary" runat="server" ForeColor="Green"></asp:Label>
+        </div>
+    </form>
+</body>
+</html>
+
+Default.aspx.cs
+
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Web.UI;
+
+namespace proj7
+{
+    public partial class _Default : Page
+    {
+        // Connection string to the database
+        string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["ConnString"].ToString();
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            // Any logic you want to execute on page load can go here.
+        }
+
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            // Declare variables to store employee ID and department ID
+            int empID = 0;
+            int deptID = 0;
+
+            // Correctly access the 'Text' property of the TextBox controls to get input values
+            if (int.TryParse(empID.Text, out empID) && int.TryParse(deptID.Text, out deptID))
+            {
+                // Call method to fetch salary from database
+                decimal salary = GetEmployeeSalary(empID, deptID);
+
+                // If salary is greater than zero, display the salary
+                if (salary > 0)
+                {
+                    lblSalary.Text = "Employee Salary: $" + salary.ToString("F2");
+                }
+                else
+                {
+                    lblSalary.Text = "No salary data found for the provided details.";
+                }
+            }
+            else
+            {
+                // If parsing fails, show an error message
+                lblSalary.Text = "Invalid input. Please enter valid numeric values.";
+            }
+        }
+
+        private decimal GetEmployeeSalary(int empID, int deptID)
+        {
+            decimal salary = 0;
+
+            // Define the SQL query to retrieve the salary based on empID and deptID
+            string query = @"
+                SELECT s.Salary
+                FROM empsalary s
+                JOIN empdetails e ON s.EmpID = e.EmpID
+                WHERE e.EmpID = @EmpID AND e.DeptID = @DeptID";
+
+            // Create the connection and command objects
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@EmpID", empID);
+                cmd.Parameters.AddWithValue("@DeptID", deptID);
+
+                // Open the connection and execute the query
+                conn.Open();
+                object result = cmd.ExecuteScalar();
+
+                // If a result is returned, convert it to decimal
+                if (result != null)
+                {
+                    salary = Convert.ToDecimal(result);
+                }
+            }
+
+            return salary;
+        }
+    }
+}
+
+web.config
+
+<configuration>
+  <connectionStrings>
+    <add name="ConnString" connectionString="Server=your-server-name;Database=your-database-name;Integrated Security=True;" providerName="System.Data.SqlClient" />
+  </connectionStrings>
+
+  <system.web>
+    <compilation debug="true" targetFramework="4.8" />
+    <authentication mode="Windows" />
+  </system.web>
+</configuration>
+
+empdetails
+CREATE TABLE empdetails (
+    EmpID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    DeptID INT
+);
+
+empdept
+
+CREATE TABLE empdept (
+    DeptID INT PRIMARY KEY,
+    DeptName VARCHAR(100)
+);
+
+empsalary
+
+CREATE TABLE empsalary (
+    EmpID INT PRIMARY KEY,
+    Salary DECIMAL(18, 2),
+    FOREIGN KEY (EmpID) REFERENCES empdetails(EmpID)
+);
+
+INSERT INTO empdetails (EmpID, Name, DeptID)
+VALUES
+(101, 'John Doe', 1),
+(102, 'Jane Smith', 2),
+(103, 'Mike Johnson', 3);
+
+INSERT INTO empdept (DeptID, DeptName)
+VALUES
+(1, 'HR'),
+(2, 'Finance'),
+(3, 'Engineering');
+
+INSERT INTO empsalary (EmpID, Salary)
+VALUES
+(101, 50000),
+(102, 60000),
+(103, 75000);
