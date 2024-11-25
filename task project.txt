@@ -1,0 +1,129 @@
+using System;
+using System.Data.SqlClient;
+using System.Web.UI;
+
+public partial class Default2 : System.Web.UI.Page
+{
+    private readonly string connectionString = "Server=ESMINCHE01DSKAV;Database=empldb;User Id=sa;Password=Esm@1234"; // Fixed connection string
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+    }
+
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        int empID = 0;
+        int deptID = 0;
+
+        // Validate the input
+        if (int.TryParse(txtEmpID.Text, out empID) && int.TryParse(txtDeptID.Text, out deptID))
+        {
+            // Get employee salary based on EmpID and DeptID
+            decimal salary = GetEmployeeSalary(empID, deptID);
+
+            if (salary > 0)
+            {
+                lblSalary.Text = "Employee Salary: $" + salary.ToString("F2");
+            }
+            else
+            {
+                lblSalary.Text = "No salary data found for the provided details.";
+            }
+        }
+        else
+        {
+            lblSalary.Text = "Invalid input. Please enter valid numeric values for Employee ID and Department ID.";
+        }
+    }
+
+    private decimal GetEmployeeSalary(int empID, int deptID)
+    {
+        decimal salary = 0;
+        string query = @"
+        SELECT s.Salary
+        FROM empsalary s
+        JOIN empdetails e ON s.EmpID = e.EmpID
+        WHERE e.EmpID = @EmpID AND e.DeptID = @DeptID";
+
+        // Using the connection string to create and manage connection
+        using (SqlConnection conn = new SqlConnection(connectionString))
+        {
+            SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@EmpID", empID);
+            cmd.Parameters.AddWithValue("@DeptID", deptID);
+
+            try
+            {
+                conn.Open(); // Open the connection
+                object result = cmd.ExecuteScalar(); // Execute the command
+
+                if (result != null && result != DBNull.Value)
+                {
+                    salary = Convert.ToDecimal(result);
+                }
+                else
+                {
+                    salary = 0; // Handle case where no result is returned
+                }
+            }
+            catch (ArgumentException argEx)
+            {
+                // Log or handle the argument exception separately
+                lblSalary.Text = "ArgumentException occurred: " + argEx.Message;
+            }
+            catch (Exception ex)
+            {
+                // Handle other exceptions
+                lblSalary.Text = "Error occurred: " + ex.Message;
+            }
+        }
+
+        return salary;
+    }
+}
+
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default2.aspx.cs" Inherits="Default2" %>
+
+<!DOCTYPE html>
+<html>
+<head runat="server">
+    <title>Employee Salary Lookup</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <label for="txtEmpID">Employee ID:</label>
+            <asp:TextBox ID="txtEmpID" runat="server"></asp:TextBox>
+            <br />
+            <label for="txtDeptID">Department ID:</label>
+            <asp:TextBox ID="txtDeptID" runat="server"></asp:TextBox>
+            <br />
+            <asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" />
+            <br />
+            <asp:Label ID="lblSalary" runat="server" Text=""></asp:Label>
+        </div>
+    </form>
+</body>
+</html>
+
+<?xml version="1.0"?>
+
+<!--
+  For more information on how to configure your ASP.NET application, please visit
+  http://go.microsoft.com/fwlink/?LinkId=169433
+-->
+
+<configuration>
+
+  <system.web>
+    <compilation debug="true" targetFramework="4.5" />
+    <httpRuntime targetFramework="4.5" />
+  </system.web>
+
+  <connectionStrings>
+    <add name="ConnString" connectionString="Server=ESMINCHE01DSKAV;Database=empldb;userid=sa;pwd=Esm@1234" />
+  </connectionStrings>
+
+</configuration>
+
+
