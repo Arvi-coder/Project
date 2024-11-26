@@ -1,0 +1,208 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Xml.Linq;
+
+namespace WebApplication2
+{
+    public partial class _Default : Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack) 
+          { 
+               GetProductList();    
+            }
+        }
+
+        SqlConnection con = new SqlConnection(@"Server=DESKTOP-S7QAA92\\SQLEXPRESS;Database=MyTest_DB;userid=sa;pwd=Arvi@1922");
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            int productid = int.Parse(TextBox1.Text);
+            string iname = TextBox2.Text, specification = TextBox3.Text, unit = DropDownList1.SelectedValue, status = RadioButtonList1.SelectedValue;
+            DateTime cdate = DateTime.Parse(TextBox4.Text);
+            con.Open();
+            SqlCommand co = new SqlCommand("exec ProductSetup_SP '"+productid+ "','"+iname+"','"+specification+"','"+unit+"','"+status+ "','"+cdate+"'",con);
+            co.ExecuteNonQuery();
+            con.Close(); 
+            ScriptManager.RegisterStartupScript(this, GetType(), "script", "alert('Successfully Inserted.');",true);
+            GetProductList();
+        }
+
+        void GetProductList()
+        {
+            SqlCommand co = new SqlCommand("exec ProductList_SP", con);
+            SqlDataAdapter sd = new SqlDataAdapter(co);
+            DataTable dt = new DataTable(); 
+            sd.Fill(dt);
+            GridView1.DataSource = dt;
+            GridView1.DataBind();   
+        }
+
+        protected void Button2_Click(object sender, EventArgs e)
+        {
+            int productid = int.Parse(TextBox1.Text);
+            string iname = TextBox2.Text, specification = TextBox3.Text, unit = DropDownList1.SelectedValue, status = RadioButtonList1.SelectedValue;
+            DateTime cdate = DateTime.Parse(TextBox4.Text);
+            con.Open();
+            SqlCommand co = new SqlCommand("exec ProductUpdate_SP '" + productid + "','" + iname + "','" + specification + "','" + unit + "','" + status + "','" + cdate + "'", con);
+            co.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterStartupScript(this, GetType(), "script", "alert('Successfully Updated.');", true);
+            GetProductList();
+        }
+
+        protected void Button3_Click(object sender, EventArgs e)
+        {
+            int productid = int.Parse(TextBox1.Text);
+            
+            con.Open();
+            SqlCommand co = new SqlCommand("exec ProductDelete_SP '" + productid + "'", con);
+            co.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterStartupScript(this, GetType(), "script", "alert('Successfully Deleted.');", true);
+            GetProductList();
+        }
+
+        protected void Button4_Click(object sender, EventArgs e)
+        {
+            int productid = int.Parse(TextBox1.Text);
+
+            con.Open();
+            SqlCommand co = new SqlCommand("exec ProductSearch_SP '" + productid + "'", con);
+            SqlDataAdapter sd = new SqlDataAdapter(co);
+            DataTable dt = new DataTable();
+            sd.Fill(dt);
+            GridView1.DataSource = dt;
+            GridView1.DataBind();
+        }
+    }
+
+}<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="WebApplication2._Default" %>
+
+<asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
+
+   
+
+    <table class="w-100">
+        <tr>
+            <td colspan="2" style="font-family: Arial, Helvetica, sans-serif; font-size: x-large; font-weight: bold; color: #333333">Complete CRUD Operation in Asp.Net c# with Using Stored Procedure</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>
+                <asp:Label ID="Label1" runat="server" Font-Size="Medium" Text=" Product ID"></asp:Label>
+            </td>
+            <td>
+                <asp:TextBox ID="TextBox1" runat="server" Font-Size="Medium" Width="200px"></asp:TextBox>
+                <asp:Button ID="Button4" runat="server" BackColor="#9933FF" Font-Size="Medium" ForeColor="White" OnClick="Button4_Click" Text="Search" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <asp:Label ID="Label2" runat="server" Font-Size="Medium" Text="Item Name"></asp:Label>
+            </td>
+            <td>
+                <asp:TextBox ID="TextBox2" runat="server" Font-Size="Medium" Width="200px"></asp:TextBox>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <asp:Label ID="Label3" runat="server" Font-Size="Medium" Text="Specification"></asp:Label>
+            </td>
+            <td>
+                <asp:TextBox ID="TextBox3" runat="server" Font-Size="Medium" Width="200px"></asp:TextBox>
+            </td>
+        </tr>
+        <tr>
+            <td style="height: 35px">
+                <asp:Label ID="Label4" runat="server" Font-Size="Medium" Text="Unit"></asp:Label>
+            </td>
+            <td style="height: 35px">
+                <asp:DropDownList ID="DropDownList1" runat="server" Font-Size="Medium" Width="200px">
+                    <asp:ListItem>PCS</asp:ListItem>
+                    <asp:ListItem>KG</asp:ListItem>
+                    <asp:ListItem>DZ</asp:ListItem>
+                    <asp:ListItem>Ltr</asp:ListItem>
+                </asp:DropDownList>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <asp:Label ID="Label5" runat="server" Font-Size="Medium" Text="Status"></asp:Label>
+            </td>
+            <td>
+                <asp:RadioButtonList ID="RadioButtonList1" runat="server" RepeatDirection="Horizontal">
+                    <asp:ListItem>Running</asp:ListItem>
+                    <asp:ListItem>Unused</asp:ListItem>
+                </asp:RadioButtonList>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <asp:Label ID="Label6" runat="server" Font-Size="Medium" Text="Creation Date"></asp:Label>
+            </td>
+            <td>
+                <asp:TextBox ID="TextBox4" runat="server" Font-Size="Medium" Width="200px"></asp:TextBox>
+            </td>
+        </tr>
+        <tr>
+            <td style="height: 29px"></td>
+            <td style="height: 29px"></td>
+        </tr>
+        <tr>
+            <td style="height: 43px"></td>
+            <td style="height: 43px">
+                <asp:Button ID="Button1" runat="server" BackColor="#9933FF" Font-Size="Medium" ForeColor="White" OnClick="Button1_Click" Text="Insert" />
+                <asp:Button ID="Button2" runat="server" BackColor="#9933FF" Font-Size="Medium" ForeColor="White" OnClick="Button2_Click" Text="Update" />
+                <asp:Button ID="Button3" runat="server" BackColor="#9933FF" Font-Size="Medium" ForeColor="White" OnClick="Button3_Click" Text="Delete" OnClientClick="return confirm('Are you sure to delete?')" />
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <asp:GridView ID="GridView1" runat="server" OnSelectedIndexChanged="GridView1_SelectedIndexChanged" Width="1228px">
+                </asp:GridView>
+            </td>
+        </tr>
+    </table>
+
+   
+
+</asp:Content>
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Mobile.master.cs" Inherits="WebApplication2.Site_Mobile" %>
+<%@ Register Src="~/ViewSwitcher.ascx" TagPrefix="friendlyUrls" TagName="ViewSwitcher" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <asp:ContentPlaceHolder runat="server" ID="HeadContent" />
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+        <h1>Mobile Master Page</h1>
+        <asp:ContentPlaceHolder runat="server" ID="FeaturedContent" />
+        <section class="content-wrapper main-content clear-fix">
+            <asp:ContentPlaceHolder runat="server" ID="MainContent" />
+        </section>
+        <friendlyUrls:ViewSwitcher runat="server" />
+    </div>
+    </form>
+</body>
+</html>
+ fix the error and show me the output
