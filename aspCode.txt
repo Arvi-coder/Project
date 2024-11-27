@@ -1,0 +1,21 @@
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+        <asp:ScriptManager runat="server"></asp:ScriptManager>
+        <asp:Button ID="btn" runat="server" Text="Low to High" OnClick="btn_Click" />
+        <asp:Button ID="btn1" runat="server" Text="High to Low" OnClick="btn1_Click" />
+        <asp:Button ID="btn2" runat="server" Text="Sort By Name" OnClick="btn2_Click" />
+        <asp:Button ID="btn3" runat="server" Text="Reverse Sort By Name" OnClick="btn3_Click" /><br /><br />
+        <asp:GridView ID="gv" runat="server"></asp:GridView>
+    </div>
+    </form>
+</body>
+</html>

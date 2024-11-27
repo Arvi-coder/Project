@@ -1,0 +1,98 @@
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class _Default : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    string sqlcon = ConfigurationManager.ConnectionStrings["Con"].ToString();
+    protected void btn_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            using (SqlConnection connection = new SqlConnection(sqlcon))
+            {
+                SqlCommand command = new SqlCommand("SP_LTOH", connection);
+                connection.Open();
+                SqlDataAdapter sda = new SqlDataAdapter(command);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                gv.DataSource = dt;
+                gv.DataBind();
+                connection.Close();
+            }
+        }
+        catch(Exception ex)
+        {
+            Response.Write("Error Message: " + ex.Message);
+        }
+    }
+
+    protected void btn1_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            using (SqlConnection connection = new SqlConnection(sqlcon))
+            {
+                SqlCommand command = new SqlCommand("SP_HTOL", connection);
+                connection.Open();
+                SqlDataAdapter sda = new SqlDataAdapter(command);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                gv.DataSource = dt;
+                gv.DataBind();
+                connection.Close();
+            }
+        }
+        catch (Exception ex)
+        {
+            Response.Write("Error Message: " + ex.Message);
+        }
+    }
+
+    protected void btn2_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            using (SqlConnection connection = new SqlConnection(sqlcon))
+            {
+                SqlCommand command = new SqlCommand("SP_N_ASC", connection);
+                connection.Open();
+                SqlDataAdapter sda = new SqlDataAdapter(command);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                gv.DataSource = dt;
+                gv.DataBind();
+                connection.Close();
+            }
+        }
+        catch(Exception ex)
+        {
+            Response.Write("Error Message: " + ex.Message);
+        }
+    }
+
+    protected void btn3_Click(object sender, EventArgs e)
+    {
+        using(SqlConnection connection = new SqlConnection(sqlcon))
+        {
+            SqlCommand command = new SqlCommand("SP_N_DESc",connection);
+            connection.Open();
+            SqlDataAdapter sda = new SqlDataAdapter(command);
+            DataTable dt = new DataTable();
+            sda.Fill(dt);
+            gv.DataSource = dt;
+            gv.DataBind();
+        }
+    }
+}
