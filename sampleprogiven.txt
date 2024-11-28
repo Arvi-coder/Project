@@ -1,0 +1,492 @@
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="AccountsVesselVisitBudgetCodeConfiguration.aspx.cs" Inherits="AccountsVesselVisitBudgetCodeConfiguration" %>
+
+<!DOCTYPE html>
+
+<%@ Import Namespace="SouthNests.Phoenix.Registers" %>
+<%@ Import Namespace="SouthNests.Phoenix.Framework" %>
+<%@ Register TagPrefix="eluc" TagName="TabStrip" Src="~/UserControls/UserControlTabsTelerik.ascx" %>
+<%@ Register TagPrefix="eluc" TagName="Title" Src="~/UserControls/UserControlTitle.ascx" %>
+<%@ Register TagPrefix="eluc" TagName="Error" Src="~/UserControls/UserControlErrorMessage.ascx" %>
+<%@ Register TagPrefix="eluc" TagName="Quick" Src="~/UserControls/UserControlQuick.ascx" %>
+<%@ Register TagPrefix="eluc" TagName="Status" Src="~/UserControls/UserControlStatus.ascx" %>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>Mapping</title>
+    <telerik:RadCodeBlock ID="RadCodeBlock1" runat="server">
+        <%: Scripts.Render("~/bundles/js") %>
+        <%: Styles.Render("~/bundles/css") %>
+    </telerik:RadCodeBlock>
+</head>
+<body>
+    <form id="frmPurchaseOrderSatging" runat="server">
+        <telerik:RadScriptManager runat="server" ID="RadScriptManager1" />
+        <telerik:RadAjaxPanel ID="panel1" runat="server" Height="90%">
+            <telerik:RadSkinManager ID="RadSkinManager1" runat="server" />
+            <eluc:Error ID="ucError" runat="server" Text="" Visible="false"></eluc:Error>
+            <eluc:Status runat="server" ID="ucStatus" />
+            <table>
+                <tr>
+                     <td>
+                        <telerik:RadLabel ID="lblclaimtype" runat="server" Text=" Claim Type"></telerik:RadLabel>
+                    </td>
+                    <td>
+                        <telerik:RadComboBox ID="ddlclaimtype" runat="server" CssClass="input_mandatory" Width="90%" MarkFirstMatch="true">
+                            <Items>
+                                <telerik:RadComboBoxItem Text="--Select--" Value="Dummy"></telerik:RadComboBoxItem>
+                                <telerik:RadComboBoxItem Text="Budgeted" Value="1"></telerik:RadComboBoxItem>
+                                <telerik:RadComboBoxItem Text="Dry Dock" Value="3"></telerik:RadComboBoxItem>
+                                <telerik:RadComboBoxItem Text="Predelivery" Value="4"></telerik:RadComboBoxItem>
+                                <telerik:RadComboBoxItem Text="Non - Budgeted" Value="2"></telerik:RadComboBoxItem>
+                                <telerik:RadComboBoxItem Text="Retrofit" Value="5"></telerik:RadComboBoxItem>
+                            </Items>
+                        </telerik:RadComboBox>
+                    </td>
+
+                    <td>
+                        <telerik:RadLabel ID="lbltype" runat="server" Text="Type"></telerik:RadLabel>
+                    </td>
+                    <td>
+                        <eluc:Quick ID="ddltype" runat="server" CssClass="input" AppendDataBoundItems="true"
+                            QuickTypeCode="134"></eluc:Quick>
+                    </td>
+               </tr>
+            </table>
+            <asp:Button runat="server" ID="cmdHiddenSubmit" CssClass="hidden" OnClick="cmdHiddenSubmit_Click" />
+            <eluc:TabStrip ID="MenuDebitReference" runat="server" OnTabStripCommand="MenuDebitReference_TabStripCommand"></eluc:TabStrip>
+            <telerik:RadGrid RenderMode="Lightweight" ID="gvOrderType" Height="90%" runat="server" AllowCustomPaging="true" AllowSorting="true" AllowPaging="true" Width="100%"
+                CellSpacing="0" GridLines="None" OnItemCommand="gvOrderType_ItemCommand"  OnItemDataBound="gvOrderType_ItemDataBound" OnNeedDataSource="gvOrderType_NeedDataSource"
+                ShowFooter="true" ShowHeader="true" EnableViewState="true" EnableHeaderContextMenu="true" GroupingEnabled="false" AutoGenerateColumns="false">
+
+
+                <SortingSettings SortedBackColor="#FFF6D6" EnableSkinSortStyles="false"></SortingSettings>
+                <GroupingSettings ShowUnGroupButton="true"></GroupingSettings>
+                <MasterTableView EditMode="InPlace" HeaderStyle-Font-Bold="true" ShowHeadersWhenNoRecords="true" AllowNaturalSort="false"
+                    AutoGenerateColumns="false" DataKeyNames="FLDVESSELVISITEBUDGETCODEMAPPING">
+                    <Columns>
+                        <telerik:GridTemplateColumn HeaderText="ClaimType">
+                            <HeaderStyle Width="20%" />
+                            <ItemTemplate>
+                              
+                                <telerik:RadLabel ID="lnktype" runat="server"  Text='<%# DataBinder.Eval(Container,"DataItem.FLDCLAIMTYPENAME") %>'></telerik:RadLabel>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <telerik:RadComboBox ID="ddlBudgetedVisitEdit" runat="server" CssClass="input_mandatory" AppendDataBoundItems="true" Width="50%" MarkFirstMatch="true">
+                                    <Items >
+                                        <telerik:RadComboBoxItem Text="--Select--" Value="Dummy"></telerik:RadComboBoxItem>
+                                        <telerik:RadComboBoxItem Text="Budgeted" Value="1"></telerik:RadComboBoxItem>
+                                        <telerik:RadComboBoxItem Text="Dry Dock" Value="3"></telerik:RadComboBoxItem>
+                                        <telerik:RadComboBoxItem Text="Predelivery" Value="4"></telerik:RadComboBoxItem>
+                                        <telerik:RadComboBoxItem Text="Non - Budgeted" Value="2"></telerik:RadComboBoxItem>
+                                        <telerik:RadComboBoxItem Text="Retrofit" Value="5"></telerik:RadComboBoxItem>
+                                    </Items>
+                                </telerik:RadComboBox>
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <telerik:RadComboBox ID="ddlBudgetedVisitAdd" runat="server" CssClass="input_mandatory" Width="50%" MarkFirstMatch="true">
+                                    <Items>
+                                        <telerik:RadComboBoxItem Text="--Select--" Value="Dummy"></telerik:RadComboBoxItem>
+                                        <telerik:RadComboBoxItem Text="Budgeted" Value="1"></telerik:RadComboBoxItem>
+                                        <telerik:RadComboBoxItem Text="Dry Dock" Value="3"></telerik:RadComboBoxItem>
+                                        <telerik:RadComboBoxItem Text="Predelivery" Value="4"></telerik:RadComboBoxItem>
+                                        <telerik:RadComboBoxItem Text="Non - Budgeted" Value="2"></telerik:RadComboBoxItem>
+                                        <telerik:RadComboBoxItem Text="Retrofit" Value="5"></telerik:RadComboBoxItem>
+                                    </Items>
+                                </telerik:RadComboBox>
+                            </FooterTemplate>
+                        </telerik:GridTemplateColumn>
+                        <telerik:GridTemplateColumn HeaderText="Type">
+                            <HeaderStyle Width="20%" />
+                            <ItemTemplate>
+                                <telerik:Radlabel id="lbltypeid" runat="server" Text='<%# DataBinder.Eval(Container,"DataItem.FLDQUICKNAME") %>'/>
+                                <telerik:RadLabel ID="lblbudgetcodemap" runat="server" Visible="false" Text='<%# DataBinder.Eval(Container,"DataItem.FLDVESSELVISITEBUDGETCODEMAPPING")%>' ></telerik:RadLabel>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                 <telerik:RadLabel ID="lblbudgetcodemap" runat="server" Visible="false" Text='<%# DataBinder.Eval(Container,"DataItem.FLDVESSELVISITEBUDGETCODEMAPPING")%>' ></telerik:RadLabel>
+                                 <eluc:Quick ID="ddltypeEdit" runat="server" CssClass="input_mandatory" QuickList='<%# PhoenixRegistersQuick.ListQuick(1, 134) %>' AppendDataBoundItems="true" 
+                                   Width="100px" />
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <eluc:Quick ID="ddltypeAdd" runat="server" CssClass="input_mandatory" QuickList='<%# PhoenixRegistersQuick.ListQuick(1, 134) %>' AppendDataBoundItems="true"
+                                            QuickTypeCode="134" Width="100px" />
+                            </FooterTemplate>
+                        </telerik:GridTemplateColumn>
+                        <telerik:GridTemplateColumn HeaderText="Budget Code" AllowSorting="true">
+                            <HeaderStyle Width="15%" />
+                            <ItemStyle Wrap="False" HorizontalAlign="Left"></ItemStyle>
+                            <ItemTemplate>
+                                <%# DataBinder.Eval(Container,"DataItem.FLDSUBACCOUNT") %>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <span id="spnPickListBudgetEdit">
+                                    <telerik:RadTextBox ID="txtBudgetCodeEdit" runat="server" Text='<%# DataBinder.Eval(Container,"DataItem.FLDSUBACCOUNT") %>'
+                                        MaxLength="20" CssClass="input_mandatory" Width="70%"  >
+                                    </telerik:RadTextBox>
+                                    <telerik:RadTextBox ID="txtBudgetNameEdit" runat="server" Width="0px" CssClass="hidden"
+                                        Enabled="False">
+                                    </telerik:RadTextBox>
+                                    <asp:ImageButton ID="btnShowBudgetEdit" runat="server" ImageUrl="<%$ PhoenixTheme:images/picklist.png %>"
+                                        ImageAlign="AbsMiddle" Text=".." CommandName="BUDGETCODE" CommandArgument="<%# Container.DataSetIndex %>" />
+                                    <telerik:RadTextBox ID="txtBudgetIdEdit" runat="server" Width="0px" CssClass="hidden" Text='<%# DataBinder.Eval(Container,"DataItem.FLDBUDGETID") %>'></telerik:RadTextBox>
+                                    <telerik:RadTextBox ID="txtBudgetgroupIdEdit" runat="server" Width="0px" CssClass="hidden"></telerik:RadTextBox>
+                                </span>
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <span id="spnPickListBudgetAdd">
+                                    <telerik:RadTextBox ID="txtBudgetCodeAdd" runat="server" MaxLength="20" CssClass="input_mandatory"
+                                        Width="70%" Enabled="false">
+                                    </telerik:RadTextBox>
+                                    <telerik:RadTextBox ID="txtBudgetNameAdd" runat="server" Width="0px" CssClass="hidden" Enabled="False"></telerik:RadTextBox>
+                                    <asp:ImageButton ID="btnShowBudgetAdd" runat="server" ImageUrl="<%$ PhoenixTheme:images/picklist.png %>"
+                                        ImageAlign="AbsMiddle" Text=".." CommandName="BUDGETCODE" CommandArgument="<%# Container.DataSetIndex %>" />
+                                    <telerik:RadTextBox ID="txtBudgetIdAdd" runat="server" Width="0px" CssClass="hidden"></telerik:RadTextBox>
+                                    <telerik:RadTextBox ID="txtBudgetgroupIdAdd" runat="server" Width="0px" CssClass="hidden"></telerik:RadTextBox>
+                                </span>
+                            </FooterTemplate>
+                        </telerik:GridTemplateColumn>
+                        <telerik:GridTemplateColumn HeaderText="Action" AllowSorting="true">
+                            <HeaderStyle Width="8%" HorizontalAlign="Center" VerticalAlign="Middle" />
+                            <ItemStyle Wrap="False" HorizontalAlign="Center" Width="100px"></ItemStyle>
+                            <ItemTemplate>
+                                <asp:ImageButton runat="server" AlternateText="Edit" ImageUrl="<%$ PhoenixTheme:images/te_edit.png %>"
+                                    CommandName="EDIT"  CommandArgument='<%# Container.DataSetIndex %>' ID="cmdEdit"
+                                    ToolTip="Edit"></asp:ImageButton>
+                                <img id="Img2" runat="server" src="<%$ PhoenixTheme:images/spacer.png %>" width="3" />
+                                <asp:ImageButton runat="server" AlternateText="Delete" ImageUrl="<%$ PhoenixTheme:images/te_del.png %>"
+                                    CommandName="DELETE" CommandArgument="<%# Container.DataSetIndex %>" ID="cmdDelete"
+                                    ToolTip="Delete"></asp:ImageButton>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                               <asp:LinkButton runat="server" AlternateText="Save" CommandName="UPDATE" ID="cmdSave" ToolTip="Save">
+                                    <span class="icon"><i class="fas fa-save"></i></span>
+                                </asp:LinkButton>
+                                <img id="Img2" runat="server" alt="" src="<%$ PhoenixTheme:images/spacer.png %>"
+                                    width="3" />
+                                <asp:ImageButton runat="server" AlternateText="Cancel" ImageUrl="<%$ PhoenixTheme:images/te_del.png %>"
+                                    CommandName="Cancel" CommandArgument="<%# Container.DataSetIndex %>" ID="cmdCancel"
+                                    ToolTip="Cancel"></asp:ImageButton>
+                            </EditItemTemplate>
+                            <FooterStyle HorizontalAlign="Center" />
+                            <FooterTemplate>
+                                <asp:ImageButton runat="server" AlternateText="Add" ImageUrl="<%$ PhoenixTheme:images/te_check.png %>"
+                                    CommandName="Add" CommandArgument="<%# Container.DataSetIndex %>" ID="cmdAdd"
+                                    ToolTip="Add New"></asp:ImageButton>
+                            </FooterTemplate>
+                        </telerik:GridTemplateColumn>
+                    </Columns>
+                    <PagerStyle Mode="NextPrevNumericAndAdvanced" PageButtonCount="10" PagerTextFormat="{4}<strong>{5}</strong> Records matching your search criteria"
+                        PageSizeLabelText="Records per page:" CssClass="RadGrid_Default rgPagerTextBox" AlwaysVisible="true" />
+                </MasterTableView>
+                <ClientSettings EnableRowHoverStyle="true" AllowColumnsReorder="true" ReorderColumnsOnClient="true" AllowColumnHide="true" ColumnsReorderMethod="Reorder">
+                    <Selecting AllowRowSelect="true" EnableDragToSelectRows="false" UseClientSelectColumnOnly="true" />
+                    <Scrolling AllowScroll="true" UseStaticHeaders="true" SaveScrollPosition="true" />
+                    <Resizing EnableRealTimeResize="true" AllowResizeToFit="true" AllowColumnResize="true" />
+                </ClientSettings>
+            </telerik:RadGrid>
+        </telerik:RadAjaxPanel>
+    </form>
+</body>
+</html>
+
+
+
+using SouthNests.Phoenix.Framework;
+using SouthNests.Phoenix.Registers;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Telerik.Web.UI;
+
+public partial class AccountsVesselVisitBudgetCodeConfiguration : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        try
+        {
+            SessionUtil.PageAccessRights(this.ViewState);
+            PhoenixToolbar toolbar = new PhoenixToolbar();
+            toolbar.AddImageButton("../Accounts/AccountsVesselVisitBudgetCodeConfiguration.aspx", "Export to Excel", "icon_xls.png", "Excel");
+            toolbar.AddImageLink("javascript:CallPrint('gvOrderType')", "Print Grid", "icon_print.png", "PRINT");
+            toolbar.AddImageLink("../Accounts/AccountsVesselVisitBudgetCodeConfiguration.aspx", "Find", "search.png", "FIND");
+            toolbar.AddFontAwesomeButton("../Accounts/AccountsVesselVisitBudgetCodeConfiguration.aspx", "Clear Filter", "<i class=\"fas fa-eraser\"></i>", "CLEAR");
+            MenuDebitReference.AccessRights = this.ViewState;
+            MenuDebitReference.MenuList = toolbar.Show();
+
+            if (!IsPostBack)
+            {
+
+                ViewState["PAGENUMBER"] = 1;
+                ViewState["SORTEXPRESSION"] = null;
+                ViewState["SORTDIRECTION"] = null;
+                ViewState["VESSELID"] = PhoenixSecurityContext.CurrentSecurityContext.VesselID;
+                
+                gvOrderType.PageSize = int.Parse(PhoenixGeneralSettings.CurrentGeneralSetting.Records);
+            }
+         }
+        catch (Exception ex)
+        {
+            ucError.ErrorMessage = ex.Message;
+            ucError.Visible = true;
+
+        }
+    }
+
+    protected void gvOrderType_ItemCommand(object sender, Telerik.Web.UI.GridCommandEventArgs e)
+    {
+        try
+        {
+            if (e.CommandName.ToUpper().Equals("ADD"))
+            {
+
+                string ddlBudgetedVisitAdd = ((RadComboBox)e.Item.FindControl("ddlBudgetedVisitAdd")).SelectedValue;
+                string ddltypeAdd = ((UserControlQuick)e.Item.FindControl("ddltypeAdd")).SelectedValue;
+                string txtBudgetCodeAdd = ((RadTextBox)e.Item.FindControl("txtBudgetIdAdd")).Text;
+                
+                PhoenixAccountsVesslVisit.Vesselvisitmapinsert(
+                                                                General.GetNullableInteger(ddltypeAdd)
+                                                                ,General.GetNullableInteger(ddlBudgetedVisitAdd)
+                                                                ,General.GetNullableInteger(txtBudgetCodeAdd));
+             
+                Rebind();
+
+            }
+            if (e.CommandName.ToUpper().Equals("DELETE"))
+            {
+
+                Guid id = Guid.Parse(((RadLabel)e.Item.FindControl("lblbudgetcodemap")).Text);
+                PhoenixAccountsVesslVisit.Vesselvisitmapdelete(id);
+                gvOrderType.Rebind();
+                ucStatus.Text = "Deleted Successfully";
+
+            }
+            if (e.CommandName.ToUpper().Equals("UPDATE"))
+            {
+
+
+                string ddlBudgetedVisitEdit = ((RadComboBox)e.Item.FindControl("ddlBudgetedVisitEdit")).SelectedValue ;
+                string ddltypeEdit = ((UserControlQuick)e.Item.FindControl("ddltypeEdit")).SelectedQuick;
+                string budgetcode = ((RadTextBox)e.Item.FindControl("txtBudgetIdEdit")).Text;
+                Guid id = Guid.Parse(((RadLabel)e.Item.FindControl("lblbudgetcodemap")).Text);
+
+               PhoenixAccountsVesslVisit.Vesselvisitmapupdate(
+                                                               General.GetNullableInteger(ddltypeEdit)
+                                                               ,General.GetNullableInteger(ddlBudgetedVisitEdit)
+                                                               ,General.GetNullableInteger(budgetcode)
+                                                               ,id);
+
+                gvOrderType.Rebind();
+            }
+          
+        }
+        catch (Exception ex)
+        {
+            ucError.ErrorMessage = ex.Message;
+            ucError.Visible = true;
+        }
+
+    }
+    
+    protected void Rebind()
+    {
+        gvOrderType.SelectedIndexes.Clear();
+        gvOrderType.EditIndexes.Clear();
+        gvOrderType.DataSource = null;
+        gvOrderType.Rebind();
+    }
+    protected void gvOrderType_ItemDataBound(object sender, Telerik.Web.UI.GridItemEventArgs e)
+    {
+
+        try
+        {
+           
+            if (e.Item is GridDataItem)
+            {
+                GridDataItem item = (GridDataItem)e.Item;
+                DataRowView drv = (DataRowView)e.Item.DataItem;
+                ImageButton eb = (ImageButton)e.Item.FindControl("cmdEdit");
+                if (eb != null) eb.Visible = SessionUtil.CanAccess(this.ViewState, eb.CommandName);
+                ImageButton de = (ImageButton)e.Item.FindControl("cmdDelete");
+                if (de != null)
+                {
+                    de.Attributes.Add("onclick", "return fnConfirmDelete(event); return false;");
+                    de.Visible = SessionUtil.CanAccess(this.ViewState, de.CommandName);
+                }
+                
+
+                LinkButton sb = (LinkButton)e.Item.FindControl("cmdSave");
+                if (sb != null) sb.Visible = SessionUtil.CanAccess(this.ViewState, sb.CommandName);
+
+               
+
+            }
+            if (e.Item is GridFooterItem)
+            {
+                ImageButton ad = (ImageButton)e.Item.FindControl("cmdAdd");
+                if (ad != null) ad.Visible = SessionUtil.CanAccess(this.ViewState, ad.CommandName);
+                ImageButton ib = (ImageButton)e.Item.FindControl("btnShowBudgetAdd");
+                if (ib != null)
+                {
+                    ib.Attributes.Add("onclick", "return showPickList('spnPickListBudgetAdd', 'codehelp1', '', '../Common/CommonPickListBudgetRemainingBalance.aspx?budgetgroup=102&hardtypecode=30&IsActive=1&vesselid=" + ViewState["VESSELID"].ToString() + "&budgetdate=" + DateTime.Now.ToString() + "',false);return true; ");
+                    ib.Visible = SessionUtil.CanAccess(this.ViewState, ib.CommandName);
+                }
+           }
+
+           if (e.Item is GridEditableItem)
+            {
+                UserControlQuick ddltypeEdit = (UserControlQuick)e.Item.FindControl("ddltypeEdit");
+                DataRowView drv = (DataRowView)e.Item.DataItem;
+                if (ddltypeEdit != null)
+                {
+                    ddltypeEdit.SelectedQuick = drv["FLDQUICKCODE"].ToString();
+                }
+                ImageButton ib1 = (ImageButton)e.Item.FindControl("btnShowBudgetEdit");
+                if (ib1 != null)
+                {
+
+                    ib1.Attributes.Add("onclick", "return showPickList('spnPickListBudgetEdit', 'codehelp1', '', '../Common/CommonPickListBudgetRemainingBalance.aspx?budgetgroup=102&hardtypecode=30&IsActive=1&vesselid=" + ViewState["VESSELID"].ToString() + "&budgetdate=" + DateTime.Now.ToString() + "',true); return true; ");
+                    ib1.Visible = SessionUtil.CanAccess(this.ViewState, ib1.CommandName);
+                }
+                RadTextBox tb = (RadTextBox)e.Item.FindControl("txtOwnerBudgetNameEdit");
+                if (tb != null) tb.Attributes.Add("style", "visibility:hidden");
+                tb = (RadTextBox)e.Item.FindControl("txtOwnerBudgetIdEdit");
+                if (tb != null) tb.Attributes.Add("style", "visibility:hidden");
+                tb = (RadTextBox)e.Item.FindControl("txtOwnerBudgetgroupIdEdit");
+                if (tb != null) tb.Attributes.Add("style", "visibility:hidden");
+                RadComboBox ddlBudgetedVisitEdit = (RadComboBox)e.Item.FindControl("ddlBudgetedVisitEdit");
+                if (ddlBudgetedVisitEdit != null)
+                {
+                    ddlBudgetedVisitEdit.SelectedValue = drv["FLDCLAIMTYPE"].ToString();
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            ucError.ErrorMessage = ex.Message;
+            ucError.Visible = true;
+
+        }
+
+    }
+        protected void gvOrderType_NeedDataSource(object sender, Telerik.Web.UI.GridNeedDataSourceEventArgs e)
+        {
+        try
+        {
+            ViewState["PAGENUMBER"] = ViewState["PAGENUMBER"] != null ? ViewState["PAGENUMBER"] : gvOrderType.CurrentPageIndex + 1;
+            BindData();
+        }
+        catch (Exception ex)
+        {
+            ucError.ErrorMessage = ex.Message;
+            ucError.Visible = true;
+        }
+    }
+    private void BindData()
+    {        
+        try
+        {
+            int iRowCount = 0;
+            int iTotalPageCount = 0;
+            string[] alColumns = { "FLDCLAIMTYPENAME", "FLDQUICKNAME", "FLDSUBACCOUNT" };
+            string[] alCaptions = { "Claimtype", "Type", "Budgetcode" };
+             string sortexpression = (ViewState["SORTEXPRESSION"] == null) ? null : (ViewState["SORTEXPRESSION"].ToString());
+            int? sortdirection = null;
+            if (ViewState["SORTDIRECTION"] != null)
+                sortdirection = Int32.Parse(ViewState["SORTDIRECTION"].ToString());
+       
+
+            DataSet ds= PhoenixAccountsVesslVisit.Vesselvisitmapsearch(
+                                                                         General.GetNullableInteger(ddltype.SelectedQuick)
+                                                                        , General.GetNullableInteger(ddlclaimtype.SelectedValue)
+                                                                        , sortexpression
+                                                                        , sortdirection
+                                                                        , gvOrderType.CurrentPageIndex + 1
+                                                                        , gvOrderType.PageSize
+                                                                        , ref iRowCount
+                                                                        , ref iTotalPageCount);
+
+            General.SetPrintOptions("gvOrderType", "Vessel Visit", alCaptions, alColumns, ds);
+
+            gvOrderType.DataSource = ds;
+            gvOrderType.VirtualItemCount = iRowCount;
+
+        }
+        catch (Exception ex)
+        {
+            ucError.ErrorMessage = ex.Message;
+            ucError.Visible = true;
+        }
+    }
+
+    protected void MenuDebitReference_TabStripCommand(object sender, EventArgs e)
+    {
+        try
+        {
+            RadToolBarEventArgs dce = (RadToolBarEventArgs)e;
+            string CommandName = ((RadToolBarButton)dce.Item).CommandName;
+
+            if (CommandName.ToUpper().Equals("FIND"))
+            {
+                ViewState["PAGENUMBER"] = 1;
+                gvOrderType.Rebind();
+            }
+            if (CommandName.ToUpper().Equals("EXCEL"))
+            {
+                ShowExcel();
+            }
+            if (CommandName.ToUpper().Equals("CLEAR"))
+            {
+                ddltype.SelectedQuick = "";
+                ddlclaimtype.SelectedValue = "";
+                ViewState["PAGENUMBER"] = 1;
+                Rebind();
+            }
+        }
+        catch (Exception ex)
+        {
+            ucError.ErrorMessage = ex.Message;
+            ucError.Visible = true;
+
+        }
+    }
+
+    protected void ShowExcel()
+    {
+        int iRowCount = 0;
+        int iTotalPageCount = 0;
+        string[] alColumns = { "FLDCLAIMTYPENAME", "FLDQUICKNAME", "FLDSUBACCOUNT" };
+        string[] alCaptions = { "Claimtype", "Type", "Budgetcode" };
+
+        string sortexpression = (ViewState["SORTEXPRESSION"] == null) ? null : (ViewState["SORTEXPRESSION"].ToString());
+        int? sortdirection = null;
+
+        DataSet ds = new DataSet();
+
+        if (ViewState["SORTDIRECTION"] != null)
+            sortdirection = Int32.Parse(ViewState["SORTDIRECTION"].ToString());
+
+        ds = PhoenixAccountsVesslVisit.Vesselvisitmapsearch(
+                                                             General.GetNullableInteger(ddltype.SelectedQuick)
+                                                             ,General.GetNullableInteger(ddlclaimtype.SelectedValue)
+                                                             ,sortexpression, sortdirection
+                                                             ,int.Parse(ViewState["PAGENUMBER"].ToString())
+                                                             ,gvOrderType.PageSize
+                                                             ,ref iRowCount
+                                                             ,ref iTotalPageCount);
+
+
+        General.ShowExcel("Vessel Visit", ds.Tables[0], alColumns, alCaptions, null, null);
+        gvOrderType.DataSource = ds;
+        gvOrderType.VirtualItemCount = iRowCount;
+        ViewState["ROWCOUNT"] = iRowCount;
+    }
+
+
+    protected void cmdHiddenSubmit_Click(object sender, EventArgs e)
+    {
+        //gvOrderType.Rebind();
+    }
+}
